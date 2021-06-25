@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 from joblib import load
 import streamlit as st
+from PIL import Image
 
 class testPipeline():
     def __init__(self,Cat,Num):
@@ -18,6 +19,7 @@ class testPipeline():
         a = pd.DataFrame(self.encoder.transform(pd.DataFrame(np.array(self.Cat).reshape(-1,len(self.Cat)))).toarray())
         a = pd.concat([pd.DataFrame(np.array(self.Num).reshape(-1,len(self.Num))),a],axis=1)
         st.success('You can expect around '+str(self.model.predict(a)[0])+'₹')
+        st.write('Doesn\'t seem Right? Try Entering Correct Details!')
         print('Prediction : ',self.model.predict(a))
 
 class UI():
@@ -48,8 +50,40 @@ class UI():
         
     def build(self):
         self.bikes,self.brands,self.cities = self.getData()
-        st.header('Used Bike Price Predction')
-        self.getBikeInfo()
+        mVal = st.sidebar.selectbox('Select Option!',['Price Prediction','About'])
+
+        st.sidebar.write('You can browse code on my [Github!](https://github.com/MautKaFarishta/Used_Bike_Price_Prediction)')
+
+        mail = '📩 omkhilariindia@gmail.com'
+        st.sidebar.markdown('For any feedback or queries contact me here!')
+        st.sidebar.write(mail)
+        
+        if mVal == 'Price Prediction':
+            st.title('Used Bike Price Predction')
+            self.getBikeInfo()
+        if mVal == 'About':
+            st.title('About Used Bike Price Predction')
+            self.showAbout()
+
+    def showAbout(self):
+        st.markdown('The dataset used for project is Used _\'Bikes Prices in India Dataset of ~32000 used Bike data scraped from www.droom.in\'_')
+        link = 'https://www.kaggle.com/saisaathvik/used-bikes-prices-in-india'
+        st.markdown(link, unsafe_allow_html=True)
+
+        st.markdown('**Requirements** of \'Used Bike Price Prediction\' are specified below:')
+        st.write('➡ Pandas')
+        st.write('➡ Numpy')
+        st.write('➡ Sklearn')
+        st.write('➡ Joblib')
+        st.write('➡ Streamlit')
+
+        st.markdown('In **\'Used Bike Price Prediction\'** I have tried to leaverage some of the popular Data Science and Machine Learning techniques as part of skill enhancement.')
+        st.markdown('The flow of the _ETL Pipeline_ is Explained below.')
+
+        flow = Image.open('FlowDiagram.png')
+
+        st.image(flow,caption='Flow Chart of Pipeline')
+
 
     def getBikeInfo(self):
         brand = st.selectbox('Select Brand',self.brands)
